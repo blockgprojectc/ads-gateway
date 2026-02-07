@@ -1,30 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Link Secured</title>
+    <title>Video Hub</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f0f0f; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .container { text-align: center; padding: 20px; border: 1px solid #333; border-radius: 15px; background: #1a1a1a; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .btn { display: inline-block; margin-top: 20px; padding: 15px 40px; background: #0088cc; color: white; text-decoration: none; border-radius: 30px; font-weight: bold; font-size: 18px; transition: 0.3s; }
-        .btn:hover { background: #00aaff; transform: scale(1.05); }
-        p { color: #aaa; margin-bottom: 5px; }
+        :root { --tg-blue: #0088cc; --bg-black: #000000; --card-bg: #111111; }
+        body { background-color: var(--bg-black); color: white; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+        
+        /* Header Styling */
+        header { 
+            position: sticky; top: 0; z-index: 50; background: rgba(0,0,0,0.95); 
+            backdrop-filter: blur(4px); border-bottom: 1px solid #262626; padding: 1rem;
+        }
+        .header-content { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 10px; }
+        .logo-text { font-size: 1.25rem; font-weight: bold; margin: 0; }
+
+        /* Grid Styling */
+        main { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
+        .video-grid { 
+            display: grid; grid-template-columns: 1fr; gap: 1.5rem; 
+        }
+        @media (min-width: 640px) { .video-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        /* Video Card Styling */
+        .video-card { 
+            background: var(--card-bg); border-radius: 12px; overflow: hidden; 
+            text-decoration: none; color: white; border: 1px solid #262626; transition: 0.3s;
+        }
+        .video-card:hover { border-color: var(--tg-blue); transform: translateY(-4px); }
+        .thumb-container { width: 100%; aspect-ratio: 16 / 9; overflow: hidden; position: relative; }
+        .thumb-img { width: 100%; height: 100%; object-fit: cover; }
+        .play-overlay { 
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; 
+            background: rgba(0,0,0,0.3); opacity: 0; transition: 0.3s;
+        }
+        .video-card:hover .play-overlay { opacity: 1; }
+        .card-info { padding: 1rem; }
+        .card-title { font-size: 1rem; font-weight: 500; margin: 0; line-height: 1.4; }
+
+        /* Pagination Styling */
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 3rem; margin-bottom: 3rem; }
+        .page-btn { 
+            padding: 8px 16px; background: #1a1a1a; border: 1px solid #333; 
+            color: white; cursor: pointer; border-radius: 6px; transition: 0.2s;
+        }
+        .page-btn.active { background: var(--tg-blue); border-color: var(--tg-blue); }
+        .page-btn:hover:not(.active) { background: #333; }
+
+        /* Footer */
+        footer { border-top: 1px solid #262626; padding: 2rem; text-align: center; color: #737373; font-size: 0.875rem; }
+        .footer-links { display: flex; justify-content: center; gap: 20px; }
+        .footer-links a { color: #737373; text-decoration: none; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Your Video is Ready</h2>
-        <p>Click the button below to verify and watch.</p>
-        <a href="https://www.effectivegatecpm.com/sgk1tgjk7t?key=953a6ee48286b155821c80a7c50d853b" id="ad-btn" class="btn">CONTINUE TO VIDEO</a>
-    </div>
+
+    <header>
+        <div class="header-content">
+            <i data-lucide="video" style="color: #0088cc;"></i>
+            <h1 class="logo-text">Video Hub</h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="video-grid" id="videoGrid"></div>
+        <div class="pagination" id="paginationControls"></div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">Terms</a>
+            <span>•</span>
+            <a href="#">Privacy</a>
+        </div>
+    </footer>
 
     <script>
-        document.getElementById('ad-btn').onclick = function() {
-            // This waits 3 seconds after the click and then tries to redirect the 
-            // original page back to your Telegram bot while the ad opens.
-            setTimeout(function() {
-                window.location.href = "https://t.me/YOUR_BOT_USERNAME"; 
-            }, 3000);
-        };
+        // 1. DATA: Paste your videos here.
+        // I added "link" so it redirects to Adsterra.
+        const videoData = [
+            { id: 1, title: "Epic Cinematic Journey", thumb: "https://images.unsplash.com/photo-1628294936496-d71bf5dd1fb4?w=800", link: "ADSTERRA_LINK_1" },
+            { id: 2, title: "Action-Packed Adventure", thumb: "https://images.unsplash.com/photo-1645808651017-c5e3018553c7?w=800", link: "ADSTERRA_LINK_2" },
+            { id: 3, title: "Dramatic Landscapes 4K", thumb: "https://images.unsplash.com/photo-1637154885524-ccc86946f55f?w=800", link: "ADSTERRA_LINK_3" },
+            { id: 4, title: "Urban Night Stories", thumb: "https://images.unsplash.com/photo-1663408490081-b1edfbe1b2e9?w=800", link: "ADSTERRA_LINK_4" },
+            { id: 5, title: "Outdoor Adventure Extreme", thumb: "https://images.unsplash.com/photo-1523479690243-2642bbffaf69?w=800", link: "ADSTERRA_LINK_5" },
+            { id: 6, title: "Future Tech Unveiled", thumb: "https://images.unsplash.com/photo-1720962158789-9389a4f399da?w=800", link: "ADSTERRA_LINK_6" },
+            { id: 7, title: "Behind Scenes Documentary", thumb: "https://images.unsplash.com/photo-1628294936496-d71bf5dd1fb4?w=800", link: "ADSTERRA_LINK_7" },
+            { id: 8, title: "Thrilling Chase Sequences", thumb: "https://images.unsplash.com/photo-1645808651017-c5e3018553c7?w=800", link: "ADSTERRA_LINK_8" },
+            { id: 9, title: "Nature's Masterpieces", thumb: "https://images.unsplash.com/photo-1637154885524-ccc86946f55f?w=800", link: "ADSTERRA_LINK_9" },
+            { id: 10, title: "City Lights After Dark", thumb: "https://images.unsplash.com/photo-1663408490081-b1edfbe1b2e9?w=800", link: "ADSTERRA_LINK_10" }
+        ];
+
+        const itemsPerPage = 6;
+        let currentPage = 1;
+
+        function render() {
+            const grid = document.getElementById('videoGrid');
+            const controls = document.getElementById('paginationControls');
+            grid.innerHTML = "";
+            controls.innerHTML = "";
+
+            // Calculate Pagination
+            const totalPages = Math.ceil(videoData.length / itemsPerPage);
+            const start = (currentPage - 1) * itemsPerPage;
+            const currentVideos = videoData.slice(start, start + itemsPerPage);
+
+            // Render Videos
+            currentVideos.forEach(video => {
+                grid.innerHTML += `
+                    <a href="${video.link}" target="_blank" class="video-card">
+                        <div class="thumb-container">
+                            <img src="${video.thumb}" class="thumb-img" alt="${video.title}">
+                            <div class="play-overlay">
+                                <i data-lucide="play-circle" style="width: 48px; height: 48px; color: white;"></i>
+                            </div>
+                        </div>
+                        <div class="card-info">
+                            <h3 class="card-title">${video.title}</h3>
+                        </div>
+                    </a>
+                `;
+            });
+
+            // Render Pagination Buttons
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.innerText = i;
+                btn.className = (i === currentPage) ? "page-btn active" : "page-btn";
+                btn.onclick = () => {
+                    currentPage = i;
+                    render();
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                };
+                controls.appendChild(btn);
+            }
+            
+            // Re-initialize icons
+            lucide.createIcons();
+        }
+
+        // Initial Load
+        render();
     </script>
 </body>
 </html>
