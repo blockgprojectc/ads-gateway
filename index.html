@@ -1,0 +1,30 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Link Secured</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f0f0f; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .container { text-align: center; padding: 20px; border: 1px solid #333; border-radius: 15px; background: #1a1a1a; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .btn { display: inline-block; margin-top: 20px; padding: 15px 40px; background: #0088cc; color: white; text-decoration: none; border-radius: 30px; font-weight: bold; font-size: 18px; transition: 0.3s; }
+        .btn:hover { background: #00aaff; transform: scale(1.05); }
+        p { color: #aaa; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Your Video is Ready</h2>
+        <p>Click the button below to verify and watch.</p>
+        <a href="YOUR_ADSTERRA_DIRECT_LINK" id="ad-btn" class="btn">CONTINUE TO VIDEO</a>
+    </div>
+
+    <script>
+        document.getElementById('ad-btn').onclick = function() {
+            // This waits 3 seconds after the click and then tries to redirect the 
+            // original page back to your Telegram bot while the ad opens.
+            setTimeout(function() {
+                window.location.href = "https://t.me/YOUR_BOT_USERNAME"; 
+            }, 3000);
+        };
+    </script>
+</body>
+</html>
