@@ -5,143 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Hub</title>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root { --tg-blue: #0088cc; --bg-black: #000000; --card-bg: #111111; }
-        body { background-color: var(--bg-black); color: white; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
-        
-        /* Header Styling */
-        header { 
-            position: sticky; top: 0; z-index: 50; background: rgba(0,0,0,0.95); 
-            backdrop-filter: blur(4px); border-bottom: 1px solid #262626; padding: 1rem;
-        }
-        .header-content { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 10px; }
-        .logo-text { font-size: 1.25rem; font-weight: bold; margin: 0; }
-
-        /* Grid Styling */
-        main { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
-        .video-grid { 
-            display: grid; grid-template-columns: 1fr; gap: 1.5rem; 
-        }
-        @media (min-width: 640px) { .video-grid { grid-template-columns: repeat(2, 1fr); } }
-
-        /* Video Card Styling */
-        .video-card { 
-            background: var(--card-bg); border-radius: 12px; overflow: hidden; 
-            text-decoration: none; color: white; border: 1px solid #262626; transition: 0.3s;
-        }
-        .video-card:hover { border-color: var(--tg-blue); transform: translateY(-4px); }
-        .thumb-container { width: 100%; aspect-ratio: 16 / 9; overflow: hidden; position: relative; }
-        .thumb-img { width: 100%; height: 100%; object-fit: cover; }
-        .play-overlay { 
-            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; 
-            background: rgba(0,0,0,0.3); opacity: 0; transition: 0.3s;
-        }
-        .video-card:hover .play-overlay { opacity: 1; }
-        .card-info { padding: 1rem; }
-        .card-title { font-size: 1rem; font-weight: 500; margin: 0; line-height: 1.4; }
-
-        /* Pagination Styling */
-        .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 3rem; margin-bottom: 3rem; }
-        .page-btn { 
-            padding: 8px 16px; background: #1a1a1a; border: 1px solid #333; 
-            color: white; cursor: pointer; border-radius: 6px; transition: 0.2s;
-        }
-        .page-btn.active { background: var(--tg-blue); border-color: var(--tg-blue); }
-        .page-btn:hover:not(.active) { background: #333; }
-
-        /* Footer */
-        footer { border-top: 1px solid #262626; padding: 2rem; text-align: center; color: #737373; font-size: 0.875rem; }
-        .footer-links { display: flex; justify-content: center; gap: 20px; }
-        .footer-links a { color: #737373; text-decoration: none; }
+        @keyframes progress { 0% { width: 0%; } 100% { width: 100%; } }
+        .animate-progress { animation: progress 3s linear forwards; }
+        body { background-color: black; font-family: 'Inter', sans-serif; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-content">
-            <i data-lucide="video" style="color: #0088cc;"></i>
-            <h1 class="logo-text">Video Hub</h1>
+    <div id="loader" class="hidden fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center">
+        <div class="w-16 h-16 border-4 border-[#0088cc] border-t-transparent rounded-full animate-spin mb-6"></div>
+        <h2 class="text-white text-2xl font-bold mb-2">Verifying Connection...</h2>
+        <p class="text-neutral-400 mb-8">Please wait while we secure your link.</p>
+        <div class="w-full max-w-sm bg-neutral-800 h-2 rounded-full overflow-hidden">
+            <div class="bg-[#0088cc] h-full animate-progress"></div>
+        </div>
+    </div>
+
+    <header class="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-neutral-800 p-5">
+        <div class="max-w-7xl mx-auto flex items-center justify-center gap-3">
+            <i data-lucide="video" class="text-[#0088cc] w-8 h-8"></i>
+            <h1 class="text-white text-3xl font-bold">Video Hub</h1>
         </div>
     </header>
 
-    <main>
-        <div class="video-grid" id="videoGrid"></div>
-        <div class="pagination" id="paginationControls"></div>
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div id="video-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"></div>
+        <div id="pagination" class="flex justify-center items-center gap-3 mb-12"></div>
     </main>
 
-    <footer>
-        <div class="footer-links">
-            <a href="#">Terms</a>
-            <span>•</span>
-            <a href="#">Privacy</a>
-        </div>
-    </footer>
-
     <script>
-        // 1. DATA: Paste your videos here.
-        // I added "link" so it redirects to Adsterra.
+        // ==========================================
+        // 4. YOUR VIDEO LIST (THIS IS WHERE YOU WORK!)
+        // ==========================================
+        // To add a video: Copy from { to }, and paste it.
+        // Make sure there is a comma after every } except the last one.
+        
         const videoData = [
-            { id: 1, title: "Epic Cinematic Journey", thumb: "https://images.unsplash.com/photo-1628294936496-d71bf5dd1fb4?w=800", link: "ADSTERRA_LINK_1" },
-            { id: 2, title: "Action-Packed Adventure", thumb: "https://images.unsplash.com/photo-1645808651017-c5e3018553c7?w=800", link: "ADSTERRA_LINK_2" },
-            { id: 3, title: "Dramatic Landscapes 4K", thumb: "https://images.unsplash.com/photo-1637154885524-ccc86946f55f?w=800", link: "ADSTERRA_LINK_3" },
-            { id: 4, title: "Urban Night Stories", thumb: "https://images.unsplash.com/photo-1663408490081-b1edfbe1b2e9?w=800", link: "ADSTERRA_LINK_4" },
-            { id: 5, title: "Outdoor Adventure Extreme", thumb: "https://images.unsplash.com/photo-1523479690243-2642bbffaf69?w=800", link: "ADSTERRA_LINK_5" },
-            { id: 6, title: "Future Tech Unveiled", thumb: "https://images.unsplash.com/photo-1720962158789-9389a4f399da?w=800", link: "ADSTERRA_LINK_6" },
-            { id: 7, title: "Behind Scenes Documentary", thumb: "https://images.unsplash.com/photo-1628294936496-d71bf5dd1fb4?w=800", link: "ADSTERRA_LINK_7" },
-            { id: 8, title: "Thrilling Chase Sequences", thumb: "https://images.unsplash.com/photo-1645808651017-c5e3018553c7?w=800", link: "ADSTERRA_LINK_8" },
-            { id: 9, title: "Nature's Masterpieces", thumb: "https://images.unsplash.com/photo-1637154885524-ccc86946f55f?w=800", link: "ADSTERRA_LINK_9" },
-            { id: 10, title: "City Lights After Dark", thumb: "https://images.unsplash.com/photo-1663408490081-b1edfbe1b2e9?w=800", link: "ADSTERRA_LINK_10" }
+            { 
+                id: 1, 
+                title: "Epic Journey Movie", 
+                thumb: "https://picsum.photos/800/450?v=1", 
+                ad: "https://your-adsterra-link.com", 
+                video: "https://t.me/your-telegram-link" 
+            },
+            { 
+                id: 2, 
+                title: "Action Thriller Clip", 
+                thumb: "https://picsum.photos/800/450?v=2", 
+                ad: "https://your-adsterra-link.com", 
+                video: "https://t.me/your-telegram-link" 
+            }
         ];
 
+        // ==========================================
+        // 5. THE ENGINE (DO NOT TOUCH THIS CODE)
+        // ==========================================
         const itemsPerPage = 6;
         let currentPage = 1;
 
-        function render() {
-            const grid = document.getElementById('videoGrid');
-            const controls = document.getElementById('paginationControls');
-            grid.innerHTML = "";
-            controls.innerHTML = "";
+        function showVideo(adLink, videoUrl) {
+            document.getElementById('loader').classList.remove('hidden');
+            window.open(adLink, '_blank');
+            setTimeout(() => { window.location.href = videoUrl; }, 3000);
+        }
 
-            // Calculate Pagination
+        function render() {
+            const grid = document.getElementById('video-grid');
+            const pagin = document.getElementById('pagination');
+            grid.innerHTML = ""; pagin.innerHTML = "";
+
             const totalPages = Math.ceil(videoData.length / itemsPerPage);
             const start = (currentPage - 1) * itemsPerPage;
             const currentVideos = videoData.slice(start, start + itemsPerPage);
 
-            // Render Videos
-            currentVideos.forEach(video => {
+            currentVideos.forEach(v => {
                 grid.innerHTML += `
-                    <a href="${video.link}" target="_blank" class="video-card">
-                        <div class="thumb-container">
-                            <img src="${video.thumb}" class="thumb-img" alt="${video.title}">
-                            <div class="play-overlay">
-                                <i data-lucide="play-circle" style="width: 48px; height: 48px; color: white;"></i>
+                    <div onclick="showVideo('${v.ad}', '${v.video}')" class="group cursor-pointer bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800 hover:border-[#0088cc] transition-all">
+                        <div class="relative aspect-video">
+                            <img src="${v.thumb}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="bg-[#0088cc] p-4 rounded-full shadow-lg"><i data-lucide="play" class="text-white"></i></div>
                             </div>
                         </div>
-                        <div class="card-info">
-                            <h3 class="card-title">${video.title}</h3>
+                        <div class="p-4 text-white">
+                            <h3 class="font-medium line-clamp-1">${v.title}</h3>
+                            <button class="mt-4 w-full py-2 bg-neutral-800 group-hover:bg-[#0088cc] rounded-lg font-bold text-sm transition-colors">WATCH NOW</button>
                         </div>
-                    </a>
-                `;
+                    </div>`;
             });
 
-            // Render Pagination Buttons
             for (let i = 1; i <= totalPages; i++) {
                 const btn = document.createElement('button');
                 btn.innerText = i;
-                btn.className = (i === currentPage) ? "page-btn active" : "page-btn";
-                btn.onclick = () => {
-                    currentPage = i;
-                    render();
-                    window.scrollTo({top: 0, behavior: 'smooth'});
-                };
-                controls.appendChild(btn);
+                btn.className = `w-10 h-10 rounded-lg text-white font-bold transition-all ${currentPage === i ? 'bg-[#0088cc]' : 'bg-neutral-800 hover:bg-neutral-700'}`;
+                btn.onclick = () => { currentPage = i; render(); window.scrollTo({top: 0, behavior: 'smooth'}); };
+                pagin.appendChild(btn);
             }
-            
-            // Re-initialize icons
             lucide.createIcons();
         }
 
-        // Initial Load
         render();
     </script>
 </body>
