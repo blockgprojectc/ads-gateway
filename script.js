@@ -94,7 +94,7 @@ function render() {
                     </div>
                 </div>
                 <div class="p-8">
-                    <h3 class="font-bold text-xl text-white mb-6 line-clamp-1">${v.title}</h3>
+                    <h3 class="font-bold text-xl text-white mb-6">${v.title}</h3>
                     <button class="btn-theory w-full py-4 bg-[#FACC15] text-black rounded-2xl font-black text-xs uppercase tracking-widest">Ring to Watch</button>
                 </div>
             </div>
