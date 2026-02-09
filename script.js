@@ -72,22 +72,34 @@ function render() {
     const totalPages = Math.ceil(filtered.length / itemsPerPage);
     const currentVideos = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-    grid.innerHTML = currentVideos.map(v => `
-        <div onclick="playVideo('${v.ad}', '${v.video}')" class="group cursor-pointer bg-neutral-900/40 rounded-[2rem] overflow-hidden border border-neutral-800 hover:border-[#FACC15] transition-all duration-500">
-            <div class="relative aspect-video overflow-hidden">
-                <img src="${v.thumb}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
-                    <div class="bg-[#FACC15] p-5 rounded-full scale-0 group-hover:scale-100 transition-all duration-500 shadow-2xl shadow-[#FACC15]/50">
-                        <i data-lucide="play" class="text-black fill-current w-6 h-6"></i>
-                    </div>
+    if (currentVideos.length === 0) {
+        grid.innerHTML = `
+            <div class="col-span-full py-20 text-center">
+                <div class="bg-neutral-900/50 rounded-[3rem] p-12 border border-dashed border-neutral-800">
+                    <i data-lucide="video-off" class="w-16 h-16 text-neutral-600 mx-auto mb-6"></i>
+                    <h3 class="text-2xl font-bold text-neutral-400 mb-2">No videos found</h3>
+                    <p class="text-neutral-500">Upload content via the bot to see it here.</p>
                 </div>
             </div>
-            <div class="p-8">
-                <h3 class="font-bold text-xl text-white mb-6 line-clamp-1">${v.title}</h3>
-                <button class="btn-theory w-full py-4 bg-[#FACC15] text-black rounded-2xl font-black text-xs uppercase tracking-widest">Ring to Watch</button>
+        `;
+    } else {
+        grid.innerHTML = currentVideos.map(v => `
+            <div onclick="playVideo('${v.ad}', '${v.video}')" class="group cursor-pointer bg-neutral-900/40 rounded-[2rem] overflow-hidden border border-neutral-800 hover:border-[#FACC15] transition-all duration-500">
+                <div class="relative aspect-video overflow-hidden">
+                    <img src="${v.thumb}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
+                        <div class="bg-[#FACC15] p-5 rounded-full scale-0 group-hover:scale-100 transition-all duration-500 shadow-2xl shadow-[#FACC15]/50">
+                            <i data-lucide="play" class="text-black fill-current w-6 h-6"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-8">
+                    <h3 class="font-bold text-xl text-white mb-6 line-clamp-1">${v.title}</h3>
+                    <button class="btn-theory w-full py-4 bg-[#FACC15] text-black rounded-2xl font-black text-xs uppercase tracking-widest">Ring to Watch</button>
+                </div>
             </div>
-        </div>
-    `).join('');
+        `).join('');
+    }
 
     pagin.innerHTML = totalPages <= 1 ? "" : Array.from({ length: totalPages }, (_, i) => i + 1).map(num => `
         <button onclick="setPage(${num})" 
