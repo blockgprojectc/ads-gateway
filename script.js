@@ -95,7 +95,7 @@ function render() {
                 </div>
                 <div class="p-8">
                     <h3 class="font-bold text-xl text-white mb-6 break-words whitespace-normal">${v.title}</h3>
-                    <button class="btn-theory w-full py-4 bg-[#FACC15] text-black rounded-2xl font-black text-xs uppercase tracking-widest">Ring to Watch</button>
+                    <button class="btn-theory w-full py-4 bg-[#FACC15] text-black rounded-2xl font-black text-xs uppercase tracking-widest">Watch</button>
                 </div>
             </div>
         `).join('');
