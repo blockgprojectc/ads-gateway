@@ -50,6 +50,25 @@
         <div id="pagination" class="flex justify-center items-center gap-3 py-10"></div>
     </main>
 
+    <!-- Series Modal -->
+    <div id="series-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-2xl" onclick="closeCollection()"></div>
+        <div
+            class="relative w-full max-w-4xl bg-neutral-900/50 border border-neutral-800 rounded-[3rem] overflow-hidden shadow-2xl">
+            <div class="p-8 border-b border-white/5 flex items-center justify-between bg-neutral-900">
+                <h2 id="modal-title" class="text-2xl font-black uppercase italic text-[#FACC15]">Series Title</h2>
+                <button onclick="closeCollection()"
+                    class="p-4 rounded-2xl bg-white/5 hover:bg-[#FACC15] hover:text-black transition-all">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="modal-parts"
+                class="p-8 max-h-[70vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6 bg-black/40">
+                <!-- Parts injected here -->
+            </div>
+        </div>
+    </div>
+
     <script src="https://pl28711309.effectivegatecpm.com/60/24/1f/60241f7703325cefc0f1eaa7a75ef6ef.js"></script>
     <script src="script.js"></script>
 </body>
