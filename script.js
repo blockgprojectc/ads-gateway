@@ -182,7 +182,7 @@ function render() {
         </button>
     `).join('');
 
-    ['all', 'new', 'long'].forEach(cat => {
+    ['all', 'new', 'long', 'indian'].forEach(cat => {
         const btn = document.getElementById(`btn-${cat}`);
         if (cat === activeCategory) {
             btn.className = "btn-theory px-10 py-3.5 rounded-2xl font-bold text-sm bg-[#FACC15] text-black shadow-lg shadow-[#FACC15]/40";
